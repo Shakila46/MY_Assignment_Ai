@@ -36,7 +36,7 @@ if st.button("Generate Answer"):
                 
                 chat_completion = client.chat.completions.create(
                     messages=[{"role": "user", "content": f"Provide a detailed academic answer for: {question}"}],
-                    model="llama3-8b-8192",
+                    model="llama-3.3-70b-versatile",
                 )
                 answer = chat_completion.choices[0].message.content
                 st.subheader("Answer:")
