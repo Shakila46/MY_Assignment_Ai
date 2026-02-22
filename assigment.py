@@ -3,91 +3,61 @@ from groq import Groq
 from fpdf import FPDF
 
 
-class AssignmentPDF(FPDF):
-    def header(self):
-        self.set_font('Arial', 'B', 15)
-        self.cell(0, 10, 'Assignment Report', border=False, ln=1, align='C')
-        self.ln(5)
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+if 'usage_count' not in st.session_state:
+    st.session_state.usage_count = 0
 
 
-def create_pdf(name, title, content):
-    pdf = AssignmentPDF()
-    pdf.add_page()
-    
-   
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, f"Student Name: {name}", ln=1)
-    pdf.cell(0, 10, f"Topic: {title}", ln=1)
-    pdf.ln(10)
-    
-    pdf.set_font("Arial", size=12)
-    
-   
-  
-    clean_text = content.replace('“', '"').replace('”', '"').replace("‘", "'").replace("’", "'")
-    clean_text = clean_text.replace('—', '-').replace('–', '-').replace('•', '*')
-    
- 
-    final_text = clean_text.encode('latin-1', 'replace').decode('latin-1')
-    
-    pdf.multi_cell(0, 10, txt=final_text)
-    return pdf.output(dest='S').encode('latin-1')
+st.set_page_config(page_title="AI Assignment Helper", layout="centered")
 
 
-st.set_page_config(page_title="Pro Assignment AI", page_icon="📝")
-st.title("🎓 Pro Assignment Humanizer")
+st.sidebar.title("📊 Usage Tracker")
+st.sidebar.write(f"Number of times used today: **{st.session_state.usage_count}**")
+st.sidebar.progress(min(st.session_state.usage_count / 30, 1.0)) # Progress bar එකක්
 
 
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+try:
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+except Exception:
+    st.error("API Key Not Found. Please set the GROQ_API_KEY in Streamlit secrets.")
 
-col1, col2 = st.columns(2)
-with col1:
-    student_name = st.text_input("Student Name :")
-with col2:
-    assignment_title = st.text_input("Title:")
+st.title("📝 AI Assignment Assistant")
+st.write("You can ask any academic question related to Software Quality Assurance, and I'll provide a detailed answer along with a downloadable PDF. You have a limit of 30 free uses per day, so use them wisely!")
 
-user_query = st.text_area("Question:", height=150)
 
+question = st.text_area("Question", placeholder="Ex: What is Software Quality Assurance?")
 
 if st.button("Generate Answer"):
-    if user_query and student_name and assignment_title:
-        with st.spinner('Generating answer...'):
+    if question:
+       
+        st.session_state.usage_count += 1
+        
+        with st.spinner("Generating answer..."):
             try:
+                
                 chat_completion = client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "system", 
-                            "content": "You are a human student. Write an academic assignment answer in natural, fluent English. Use paragraphs and avoid using list bullets."
-                        },
-                        {"role": "user", "content": user_query}
-                    ],
-                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": f"Provide a detailed academic answer for: {question}"}],
+                    model="llama3-8b-8192",
                 )
+                answer = chat_completion.choices[0].message.content
+                st.subheader("Answer:")
+                st.write(answer)
+
                
-                st.session_state.output = chat_completion.choices[0].message.content
-                st.success("Successfully generated the answer!")
-                st.info(st.session_state.output)
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                pdf.multi_cell(0, 10, txt=f"Question: {question}\n\nAnswer:\n{answer}")
+                
+                pdf_output = "assignment_answer.pdf"
+                pdf.output(pdf_output)
+
+                with open(pdf_output, "rb") as f:
+                    st.download_button("Download as PDF", f, file_name="Assignment_Answer.pdf")
             except Exception as e:
                 st.error(f"Error: {e}")
     else:
-        st.warning("Please fill in all the fields before generating the answer.")
+        st.warning("Please enter a question before generating an answer.")
 
 
-if 'output' in st.session_state:
-    try:
-     
-        pdf_bytes = create_pdf(student_name, assignment_title, st.session_state.output)
-        
-        st.download_button(
-            label="📄 Download as PDF",
-            data=pdf_bytes,
-            file_name=f"{assignment_title}.pdf",
-            mime="application/pdf"
-        )
-    except Exception as pdf_err:
-        st.error(f"PDF Error: {pdf_err}")
+if st.session_state.usage_count >= 25:
+    st.sidebar.warning("You are approaching your daily limit of 30 uses. Please use your remaining attempts wisely!")
