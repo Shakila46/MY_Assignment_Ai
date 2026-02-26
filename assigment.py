@@ -35,12 +35,21 @@ if st.button("Generate Answer"):
             try:
                 
                 chat_completion = client.chat.completions.create(
+                   chat_completion = client.chat.completions.create(
                         messages=[
                             {
                                 "role": "system", 
-                                "content": "You are a helpful assistant. Write in a human-like, natural style. Use varying sentence lengths and avoid common AI transition words like 'Furthermore' or 'In conclusion' unless necessary."
+                                "content": """You are an undergraduate student writing an academic assignment. Your writing style must be highly natural and human-like. 
+                                Crucial rules to follow:
+                                1. High Burstiness: Mix short, punchy sentences with longer, complex ones. 
+                                2. High Perplexity: Use diverse vocabulary but avoid overly flowery or typical AI jargon (do NOT use words like 'Furthermore', 'Delving into', 'Crucial', 'In conclusion', 'Tapestry', or 'Undeniably').
+                                3. Tone: Maintain an objective academic tone, but sound like a real student explaining a concept, not a textbook or a machine. 
+                                4. Structure: Avoid perfect symmetry in paragraphs. Make it flow naturally with slight, acceptable conversational transitions."""
                             },
-                            {"role": "user", "content": f"Explain this topic like a student: {question}"}
+                            {
+                                "role": "user", 
+                                "content": f"Provide a detailed academic answer for the following question, following the system instructions strictly: {question}"
+                            }
                         ],
                         model="llama-3.3-70b-versatile",
                     )
