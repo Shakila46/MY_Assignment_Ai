@@ -35,9 +35,15 @@ if st.button("Generate Answer"):
             try:
                 
                 chat_completion = client.chat.completions.create(
-                    messages=[{"role": "user", "content": f"Provide a detailed academic answer for: {question}"}],
-                    model="llama-3.3-70b-versatile",
-                )
+                        messages=[
+                            {
+                                "role": "system", 
+                                "content": "You are a helpful assistant. Write in a human-like, natural style. Use varying sentence lengths and avoid common AI transition words like 'Furthermore' or 'In conclusion' unless necessary."
+                            },
+                            {"role": "user", "content": f"Explain this topic like a student: {question}"}
+                        ],
+                        model="llama-3.3-70b-versatile",
+                    )
                 answer = chat_completion.choices[0].message.content
                 st.subheader("Answer:")
                 st.write(answer)
