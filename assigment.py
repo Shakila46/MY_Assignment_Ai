@@ -34,25 +34,27 @@ if st.button("Generate Answer"):
         with st.spinner("Generating answer..."):
             try:
                 
+                
+               # AI එකෙන් පිළිතුර ලබාගැනීම (High Temperature + Advanced Prompt)
                 chat_completion = client.chat.completions.create(
-                   chat_completion = client.chat.completions.create(
-                        messages=[
-                            {
-                                "role": "system", 
-                                "content": """You are an undergraduate student writing an academic assignment. Your writing style must be highly natural and human-like. 
-                                Crucial rules to follow:
-                                1. High Burstiness: Mix short, punchy sentences with longer, complex ones. 
-                                2. High Perplexity: Use diverse vocabulary but avoid overly flowery or typical AI jargon (do NOT use words like 'Furthermore', 'Delving into', 'Crucial', 'In conclusion', 'Tapestry', or 'Undeniably').
-                                3. Tone: Maintain an objective academic tone, but sound like a real student explaining a concept, not a textbook or a machine. 
-                                4. Structure: Avoid perfect symmetry in paragraphs. Make it flow naturally with slight, acceptable conversational transitions."""
-                            },
-                            {
-                                "role": "user", 
-                                "content": f"Provide a detailed academic answer for the following question, following the system instructions strictly: {question}"
-                            }
-                        ],
-                        model="llama-3.3-70b-versatile",
-                    )
+                    messages=[
+                        {
+                            "role": "system", 
+                            "content": """Write a rough, unstructured first draft of an academic response. 
+                            DO NOT format it perfectly. DO NOT use introductory or concluding filler sentences (like 'In this essay I will discuss...').
+                            Write casually but with academic facts. Make sentences uneven—some extremely short. Some long and winding. 
+                            Never use transition words like 'Furthermore', 'Moreover', 'Additionally', or 'In conclusion'. Just jump straight into the next point. 
+                            Imagine you are quickly typing your thoughts into a notepad."""
+                        },
+                        {
+                            "role": "user", 
+                            "content": f"Answer this directly: {question}"
+                        }
+                    ],
+                    model="llama-3.3-70b-versatile",
+                    temperature=0.85,  # මේකෙන් අහඹු බව (Randomness) වැඩි කරනවා
+                    top_p=0.9,         # මේකෙනුත් වෙනස් වචන තෝරගන්න බල කරනවා
+                )
                 answer = chat_completion.choices[0].message.content
                 st.subheader("Answer:")
                 st.write(answer)
