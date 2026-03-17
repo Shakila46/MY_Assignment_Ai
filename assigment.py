@@ -35,7 +35,7 @@ if st.button("Generate Answer"):
             try:
                 
                 
-               # AI එකෙන් පිළිතුර ලබාගැනීම (High Temperature + Advanced Prompt)
+               #High Temperature + Advanced Prompt
                 chat_completion = client.chat.completions.create(
                     messages=[
                         {
