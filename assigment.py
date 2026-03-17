@@ -12,7 +12,7 @@ st.set_page_config(page_title="AI Assignment Helper", layout="centered")
 
 st.sidebar.title("📊 Usage Tracker")
 st.sidebar.write(f"Number of times used today: **{st.session_state.usage_count}**")
-st.sidebar.progress(min(st.session_state.usage_count / 30, 1.0)) # Progress bar එකක්
+st.sidebar.progress(min(st.session_state.usage_count / 30, 1.0)) # Progress bar
 
 
 try:
@@ -52,8 +52,8 @@ if st.button("Generate Answer"):
                         }
                     ],
                     model="llama-3.3-70b-versatile",
-                    temperature=0.85,  # මේකෙන් අහඹු බව (Randomness) වැඩි කරනවා
-                    top_p=0.9,         # මේකෙනුත් වෙනස් වචන තෝරගන්න බල කරනවා
+                    temperature=0.85,  
+                    top_p=0.9,         
                 )
                 answer = chat_completion.choices[0].message.content
                 st.subheader("Answer:")
