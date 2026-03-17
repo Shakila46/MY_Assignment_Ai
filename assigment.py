@@ -10,7 +10,7 @@ if 'usage_count' not in st.session_state:
 st.set_page_config(page_title="AI Assignment Helper", layout="centered")
 
 
-st.sidebar.title("📊 Usage Tracker")
+st.sidebar.title(" Usage Tracker")
 st.sidebar.write(f"Number of times used today: **{st.session_state.usage_count}**")
 st.sidebar.progress(min(st.session_state.usage_count / 30, 1.0)) # Progress bar
 
@@ -20,7 +20,7 @@ try:
 except Exception:
     st.error("API Key Not Found. Please set the GROQ_API_KEY in Streamlit secrets.")
 
-st.title("📝 AI Assignment Assistant")
+st.title(" AI Assignment Assistant")
 st.write("You can ask any academic question related to Software Quality Assurance, and I'll provide a detailed answer along with a downloadable PDF. You have a limit of 30 free uses per day, so use them wisely!")
 
 
