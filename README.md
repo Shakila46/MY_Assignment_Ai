@@ -28,5 +28,4 @@ Make sure you have Python installed. You will also need a Groq API Key. You can 
 
 1. **Clone the repository:**
    ```bash
-  [ git clone [https://github.com/yourusername/pro-assignment-humanizer.git](https://github.com/yourusername/pro-assignment-humanizer.git)
-   cd pro-assignment-humanizer](https://github.com/Shakila46/MY_Assignment_Ai.git)
+ https://github.com/Shakila46/MY_Assignment_Ai.git
